@@ -4,12 +4,12 @@ local strategies = require("version-lens.strategies")
 
 local M = {}
 
----@class PackageManager
+---@class version-lens.PackageManager
 ---@field lockfile string
 ---@field list_cmd string
 ---@field parse_strategy fun(parsed: table): table<string, string>
 
----@type table<string, PackageManager>
+---@type table<string, version-lens.PackageManager>
 PACKAGE_MANAGERS = {
 	npm = {
 		lockfile = "package-lock.json",
@@ -23,10 +23,12 @@ PACKAGE_MANAGERS = {
 	},
 }
 
+---@return boolean is_package_json Is the current file a package.json file
 local function is_package_json()
 	return vim.fn.expand("%:t") == "package.json"
 end
 
+---@return string? manager The package manager used in the current project
 local function get_package_manager()
 	for manager, entry in pairs(PACKAGE_MANAGERS) do
 		if vim.fn.filereadable(entry.lockfile) == 1 then
@@ -37,6 +39,7 @@ local function get_package_manager()
 	return nil
 end
 
+---@return table<string, string>? versions A table containing package names and their versions
 local function fetch_versions()
 	local manager = get_package_manager()
 	if not manager then
@@ -60,6 +63,7 @@ local function fetch_versions()
 	return pkg_manager_spec.parse_strategy(parsed)
 end
 
+---@return nil
 local function add_virtual_text()
 	if not is_package_json() then
 		return
@@ -84,6 +88,7 @@ local function add_virtual_text()
 	end
 end
 
+---@return nil
 function M.setup()
 	local group = vim.api.nvim_create_augroup("VersionLens", { clear = true })
 

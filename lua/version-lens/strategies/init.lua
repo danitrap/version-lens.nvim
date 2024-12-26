@@ -1,5 +1,8 @@
 local M = {}
 
+---Parse the output of `npm list --depth=0 --json` and return a table with package names and their versions
+---@param parsed any
+---@return table<string, string>? versions
 M.npm_parse_strategy = function(parsed)
 	if not parsed.dependencies then
 		return nil
@@ -13,6 +16,9 @@ M.npm_parse_strategy = function(parsed)
 	return versions
 end
 
+---Parse the output of `pnpm list --depth=0 --json` and return a table with package names and their versions
+---@param parsed any
+---@return table<string, string>? versions
 M.pnpm_parse_strategy = function(parsed)
 	if #parsed == 0 then
 		return nil
