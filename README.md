@@ -44,6 +44,9 @@ Example:
   "dependencies": {
     "express": "^4.17.1",  4.17.3
     "lodash": "~4.17.21"  4.17.21
+  },
+  "devDependencies": {
+    "jest": "^27.0.1"  27.0.6
   }
 }
 ```
