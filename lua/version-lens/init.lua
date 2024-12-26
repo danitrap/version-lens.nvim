@@ -7,7 +7,7 @@ local M = {}
 ---@class version-lens.PackageManager
 ---@field lockfile string
 ---@field list_cmd string
----@field parse_strategy fun(parsed: table): table<string, string>
+---@field parse_strategy fun(output: string): table<string, string>
 
 ---@type table<string, version-lens.PackageManager>
 PACKAGE_MANAGERS = {
@@ -20,6 +20,11 @@ PACKAGE_MANAGERS = {
 		lockfile = "pnpm-lock.yaml",
 		list_cmd = "pnpm list --depth=0 --json",
 		parse_strategy = strategies.pnpm_parse_strategy,
+	},
+	yarn = {
+		lockfile = "yarn.lock",
+		list_cmd = "yarn list --depth=0",
+		parse_strategy = strategies.yarn_parse_strategy,
 	},
 }
 
@@ -55,12 +60,7 @@ local function fetch_versions()
 		return nil
 	end
 
-	local ok, parsed = pcall(vim.fn.json_decode, result.stdout)
-	if not ok then
-		return nil
-	end
-
-	return pkg_manager_spec.parse_strategy(parsed)
+	return pkg_manager_spec.parse_strategy(result.stdout)
 end
 
 ---@return nil

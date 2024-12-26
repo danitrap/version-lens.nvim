@@ -93,6 +93,15 @@ describe("version-lens", function()
               ]
               ]],
 						}
+					elseif cmd[1] == "yarn" then
+						return {
+							code = 0,
+							stdout = [[
+              ├─ lodash@4.17.21
+              ├─ express@4.18.2
+              └─ tslib@2.8.1
+              ]],
+						}
 					end
 					return { code = 1, stdout = "" }
 				end,
@@ -158,6 +167,38 @@ describe("version-lens", function()
 			assert.equals(2, #mock_extmarks)
 			assert.equals(" 4.17.21", mock_extmarks[1].opts.virt_text[1][1])
 			assert.equals(" 4.18.2", mock_extmarks[2].opts.virt_text[1][1])
+		end)
+
+		it("should work with yarn package manager", function()
+			mock_buf_lines = {
+				"{",
+				'  "dependencies": {',
+				'    "lodash": "^4.0.0",',
+				'    "express": "^4.0.0"',
+				"  },",
+				'  "devDependencies": {',
+				'    "tslib": "^2.8.0"',
+				"  }",
+				"}",
+			}
+
+			vim.fn.filereadable = function(file)
+				if file == "yarn.lock" then
+					return 1
+				end
+				return 0
+			end
+
+			version_lens.setup()
+			-- Simulate BufReadPost event
+			local autocmd_callback = mock_autocmds[1].opts.callback
+			autocmd_callback()
+
+			-- Check if virtual text was added correctly
+			assert.equals(3, #mock_extmarks)
+			assert.equals(" 4.17.21", mock_extmarks[1].opts.virt_text[1][1])
+			assert.equals(" 4.18.2", mock_extmarks[2].opts.virt_text[1][1])
+			assert.equals(" 2.8.1", mock_extmarks[3].opts.virt_text[1][1])
 		end)
 	end)
 end)
