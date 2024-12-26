@@ -5,7 +5,7 @@ A Neovim plugin that displays installed package versions as virtual text in pack
 ## Features
 
 - Shows actual installed versions next to package dependencies in package.json
-- Supports multiple package managers (npm, yarn, pnpm)
+- Supports multiple package managers (npm, pnpm)
 - Automatically detects the package manager based on lock files
 - Updates on file load
 - Zero configuration required
@@ -15,7 +15,6 @@ A Neovim plugin that displays installed package versions as virtual text in pack
 - Neovim >= 0.8.0
 - One of the following package managers installed:
   - npm
-  - yarn
   - pnpm
 
 ## Installation
@@ -33,7 +32,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 The plugin automatically activates when opening a `package.json` file. It will:
 
-1. Detect your package manager (npm, yarn, or pnpm)
+1. Detect your package manager (npm or pnpm)
 2. Fetch currently installed versions
 3. Display versions as virtual text at the end of each dependency line
 

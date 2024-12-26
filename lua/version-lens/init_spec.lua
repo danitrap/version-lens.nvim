@@ -63,17 +63,35 @@ describe("version-lens", function()
 						return {
 							code = 0,
 							stdout = [[
-                                {
-                                    "dependencies": {
-                                        "lodash": {
-                                            "version": "4.17.21"
-                                        },
-                                        "express": {
-                                            "version": "4.18.2"
-                                        }
-                                    }
+                        {
+                            "dependencies": {
+                                "lodash": {
+                                    "version": "4.17.21"
+                                },
+                                "express": {
+                                    "version": "4.18.2"
                                 }
-                            ]],
+                            }
+                        }
+                    ]],
+						}
+					elseif cmd[1] == "pnpm" then
+						return {
+							code = 0,
+							stdout = [[
+              [
+                        {
+                            "dependencies": {
+                                "lodash": {
+                                    "version": "4.17.21"
+                                },
+                                "express": {
+                                    "version": "4.18.2"
+                                }
+                            }
+                        }
+              ]
+              ]],
 						}
 					end
 					return { code = 1, stdout = "" }
@@ -102,6 +120,34 @@ describe("version-lens", function()
 				"  }",
 				"}",
 			}
+
+			version_lens.setup()
+			-- Simulate BufReadPost event
+			local autocmd_callback = mock_autocmds[1].opts.callback
+			autocmd_callback()
+
+			-- Check if virtual text was added correctly
+			assert.equals(2, #mock_extmarks)
+			assert.equals(" 4.17.21", mock_extmarks[1].opts.virt_text[1][1])
+			assert.equals(" 4.18.2", mock_extmarks[2].opts.virt_text[1][1])
+		end)
+
+		it("should work with pnpm package manager", function()
+			mock_buf_lines = {
+				"{",
+				'  "dependencies": {',
+				'    "lodash": "^4.0.0",',
+				'    "express": "^4.0.0"',
+				"  }",
+				"}",
+			}
+
+			vim.fn.filereadable = function(file)
+				if file == "pnpm-lock.yaml" then
+					return 1
+				end
+				return 0
+			end
 
 			version_lens.setup()
 			-- Simulate BufReadPost event

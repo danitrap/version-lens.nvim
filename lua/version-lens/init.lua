@@ -1,24 +1,25 @@
 -- Plugin to display installed versions in virtual text when opening package.json
 
+local strategies = require("version-lens.strategies")
+
 local M = {}
 
 ---@class PackageManager
 ---@field lockfile string
 ---@field list_cmd string
+---@field parse_strategy fun(parsed: table): table<string, string>
 
 ---@type table<string, PackageManager>
 PACKAGE_MANAGERS = {
 	npm = {
 		lockfile = "package-lock.json",
 		list_cmd = "npm list --depth=0 --json",
+		parse_strategy = strategies.npm_parse_strategy,
 	},
 	pnpm = {
 		lockfile = "pnpm-lock.yaml",
 		list_cmd = "pnpm list --depth=0 --json",
-	},
-	yarn = {
-		lockfile = "yarn.lock",
-		list_cmd = "yarn list --depth=0 --json",
+		parse_strategy = strategies.pnpm_parse_strategy,
 	},
 }
 
@@ -52,16 +53,11 @@ local function fetch_versions()
 	end
 
 	local ok, parsed = pcall(vim.fn.json_decode, result.stdout)
-	if not ok or not parsed.dependencies then
+	if not ok then
 		return nil
 	end
 
-	local versions = {}
-	for pkg, data in pairs(parsed.dependencies) do
-		versions[pkg] = data.version
-	end
-
-	return versions
+	return pkg_manager_spec.parse_strategy(parsed)
 end
 
 local function add_virtual_text()
