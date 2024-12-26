@@ -99,7 +99,7 @@ describe("version-lens", function()
 							stdout = [[
               ├─ lodash@4.17.21
               ├─ express@4.18.2
-              ├─ @fake@4.1.1
+              ├─ @fake/dependency@4.1.1
               └─ tslib@2.8.1
               ]],
 						}
@@ -176,7 +176,7 @@ describe("version-lens", function()
 				'  "dependencies": {',
 				'    "lodash": "^4.0.0",',
 				'    "express": "^4.0.0"',
-				'    "@fake": "^4.0.0"',
+				'    "@fake/dependency": "^4.0.0"',
 				"  },",
 				'  "devDependencies": {',
 				'    "tslib": "^2.8.0"',
