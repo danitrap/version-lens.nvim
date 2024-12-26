@@ -62,7 +62,7 @@ M.yarn_parse_strategy = function(output)
 	for line in output:gmatch("[^\r\n]+") do
 		if not line:match("^yarn%s+list") and #line > 0 then
 			-- Match both ├ (\226\148\156) and └ (\226\148\148) characters
-			local pkg, version = line:match("%s*[\226\148\156\226\148\148]\226\148\128%s+([^@]+)@([%d%.]+)")
+			local pkg, version = line:match("%s*[\226\148\156\226\148\148]\226\148\128%s+(@?[^@]+)@([%d%.]+)")
 
 			if pkg and version then
 				versions[pkg] = version
